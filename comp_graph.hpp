@@ -9,9 +9,14 @@ class comp_graph {
 private:
     using unq_ptr = std::unique_ptr;
     struct comp_node {
-        unq_ptr<T> m_node;
+        unq_ptr<T>         m_node;
+        int                m_operation;
         unq_ptr<comp_node> m_l;
         unq_ptr<comp_node> m_r;
     }
     unq_ptr<comp_node> head;
+public:
+    void add_item(unq_ptr<T>) {
+        
+    }
 };
