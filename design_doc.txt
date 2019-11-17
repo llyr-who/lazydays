@@ -1,0 +1,50 @@
+This document is just a way to track my thought process
+in the design of lazy-solvant. This will be a seperate
+branch in solvant repo
+
+This will probably manifest in a blog post of some kind
+
+-----------------------------------------------------
+Integrating functionality into solvant:
+-----------------------------------------------------
+
+    When the user requests something along the lines of
+
+        auto C = A + B;
+
+    we want solvant to "add" A+B to the computation graph.
+
+    We need some good idea of who owns the evaluation object.
+    One idea is to make it a static member of the matrix class,
+    but this is silly. As there will be one and only one
+    computation graph. that means there can only ever be one
+    result. 
+
+    I am guessing we need a "graph factory" that is responable
+    for deciding whether we add the computation to an existing
+    graph or create a new one.
+
+    Example:
+        auto D = A + B;
+        auto C = A + K;
+        auto F = A + C;
+
+    How are we to reason this sequence of calls?
+
+    First, a comp graph is generated for A + B.
+    Then a second one for A + K.  
+    The addition of the A in the third line should
+    be joined with the second graph:
+
+
+             +
+          /    \ 
+          +    A
+        /  \
+       A    B
+
+
+    This means that we must query, who has a graph?
+    More specifically, who appears in a graph already?
+    The plot thickens...
+    
