@@ -1,3 +1,4 @@
+#include <memory>
 /**
  * An early prototype of the computation graph.
  * As we are only interested in binary operations
@@ -7,24 +8,30 @@
 template <typename T>
 class comp_graph {
 private:
-    using unq_ptr = std::unique_ptr;
+    // clang-format off
     struct comp_node {
-        unq_ptr<T> m_node;
-        int m_operation;
-        unq_ptr<comp_node> m_l;
-        unq_ptr<comp_node> m_r;
+        std::unique_ptr<T>          m_node;          // e.g T = matrix<float>
+        int                         m_operation;     // +,-,...
+        std::unique_ptr<comp_node>  m_l;             // 
+        std::unique_ptr<comp_node>  m_r;
     };
-    unq_ptr<comp_node> m_head;
+    // clang-format on
+    std::unique_ptr<comp_node> m_head;
 
 public:
-    constexpr void add_item(int operation, unq_ptr<T> l, unq_ptr<T> r,
-                            unq_ptr<T> result) {
-        // create a node
+    constexpr void add_item(int operation, std::unique_ptr<T> l,
+                            std::unique_ptr<T> r, std::unique_ptr<T> result) {
+        // create (new) head
         h_node = std::make_unique<comp_node>();
+        // 
         l_node = std::make_unique<comp_node>();
+        l_node->m_node = std::move(l);
         r_node = std::make_unique<comp_node>();
-        h_node->m_l = std::move(l);
-        h_node->m_r = std::move(r);
+        r_node->m_node = std::move(r);
+
+        h_node->m_l = std::move(l_node);
+        h_node->m_r = std::move(r_node);
+
         h_node->m_node = std::move(result);
         h_node->m_operation = operation;
         if (!m_head) {

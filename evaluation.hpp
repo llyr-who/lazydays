@@ -5,10 +5,11 @@
  * and storing the result. The template parameter is a graph, which 
  * takes the same type as the evaluation object.
  */
-template <template<typename T> graph>
+template <template<typename> typename graph>
 class evaluation {
     // clang-format off
 private:
+    using T = decltype(graph);
     graph                      m_graph;
     mutable std::optional<T>   m_value;
     mutable std::mutex         m_value_lock;
